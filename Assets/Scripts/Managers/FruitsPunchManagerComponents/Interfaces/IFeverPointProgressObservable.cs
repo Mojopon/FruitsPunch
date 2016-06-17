@@ -2,7 +2,10 @@
 using System.Collections;
 using UniRx;
 
-public interface IFeverPointProgressObservable
+namespace FruitsPunchInGameScripts
 {
-    IObservable<float> FeverPointProgressObservable { get; }
+    public interface IFeverPointProgressObservable
+    {
+        IObservable<float> FeverPointProgressObservable { get; }
+    }
 }

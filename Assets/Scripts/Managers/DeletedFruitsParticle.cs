@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UniRx;
+using FruitsPunchInGameScripts;
 
 public class DeletedFruitsParticle : MonoBehaviour
 {
@@ -9,9 +10,9 @@ public class DeletedFruitsParticle : MonoBehaviour
     void Start()
     {
         FruitsPunchManager.Instance
-                     .DeleteFruitsObservable
-                     .Subscribe(x => GenerateParticles(x))
-                     .AddTo(gameObject);
+                          .DeleteFruitsObservable
+                          .Subscribe(x => GenerateParticles(x))
+                          .AddTo(gameObject);
     }
 
     void GenerateParticles(Fruits fruits)

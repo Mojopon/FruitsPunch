@@ -2,6 +2,7 @@
 using System.Collections;
 using UniRx;
 using UnityEngine.UI;
+using FruitsPunchInGameScripts;
 
 public class WaittimeRepresentingCircle : MonoBehaviour
 {

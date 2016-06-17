@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UniRx;
+using FruitsPunchInGameScripts;
 
 public class Loader : MonoBehaviour
 {

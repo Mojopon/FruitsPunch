@@ -2,7 +2,10 @@
 using System.Collections;
 using UniRx;
 
-public interface IFruitsPunchInGameProperties
+namespace FruitsPunchInGameScripts
 {
-    IObservable<Fruits> DeleteFruitsObservable { get; }
+    public interface IFruitsPunchInGameProperties
+    {
+        IObservable<Fruits> DeleteFruitsObservable { get; }
+    }
 }
