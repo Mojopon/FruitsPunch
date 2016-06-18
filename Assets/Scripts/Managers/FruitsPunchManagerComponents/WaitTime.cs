@@ -5,7 +5,7 @@ using UniRx;
 namespace FruitsPunchInGameScripts
 {
 
-    public class FruitsPunchWaitTime : MonoBehaviour, IWaitTimeProgressObservable
+    public class WaitTime : MonoBehaviour, IWaitTimeProgressObservable
     {
         public float gapBetweenDelete;
 

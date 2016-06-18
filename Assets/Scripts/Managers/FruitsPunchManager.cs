@@ -56,8 +56,8 @@ namespace FruitsPunchInGameScripts
 
         public IObservable<float> WaitTimeProgressObservable { get { return _waitTimeManager.WaitTimeProgressObservable; } }
 
-        private FruitsPunchWaitTime _waitTimeManagerSource;
-        private FruitsPunchWaitTime _waitTimeManager
+        private WaitTime _waitTimeManagerSource;
+        private WaitTime _waitTimeManager
         {
             get
             {
@@ -79,7 +79,7 @@ namespace FruitsPunchInGameScripts
         {
             if (ComponentsAreReady()) return;
 
-            _waitTimeManagerSource = gameObject.AddComponent<FruitsPunchWaitTime>();
+            _waitTimeManagerSource = gameObject.AddComponent<WaitTime>();
             _waitTimeManagerSource.Initialize(nextDeleteAvailableDuration);
         }
 
