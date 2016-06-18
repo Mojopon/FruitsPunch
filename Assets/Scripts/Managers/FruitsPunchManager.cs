@@ -33,10 +33,10 @@ namespace FruitsPunchInGameScripts
     }
 
     public class FruitsPunchManager : ReactiveSingletonMonoBehaviour<FruitsPunchManager>,
-                                  IFruitsPunchInGameProperties,
-                                  IWaitTimeProgressObservable,
-                                  IFeverPointProgressObservable
-    {
+                                      IWaitTimeProgressObservable,
+                                      IFruitsPunchInGameProperties,
+                                      IFeverPointProgressObservable
+    { 
         public float fruitDeleteRadius = 1f;
         public Vector3 fruitsSpawnPoint = new Vector3(0, 12, 0);
         public LayerMask fruitLayer;
@@ -44,20 +44,51 @@ namespace FruitsPunchInGameScripts
         public GameObject fruitPrefab;
         public Sprite[] fruitSprites;
 
-
         public float nextDeleteAvailableDuration = 0.8f;
-
         public float timeToFinishFever = 8f;
         public float pointEarnForEachDelete = 0.05f;
 
         public IObservable<Fruits> DeleteFruitsObservable { get { return _deleteFruitsStream.AsObservable(); } }
         private Subject<Fruits> _deleteFruitsStream = new Subject<Fruits>();
 
-        public IObservable<float> WaitTimeProgressObservable { get { return _waitTimeProgressStream.AsObservable(); } }
-        private BehaviorSubject<float> _waitTimeProgressStream = new BehaviorSubject<float>(0);
-
         public IObservable<float> FeverPointProgressObservable { get { return _feverPointProgressStream.AsObservable(); } }
         private BehaviorSubject<float> _feverPointProgressStream = new BehaviorSubject<float>(0);
+
+        public IObservable<float> WaitTimeProgressObservable { get { return _waitTimeManager.WaitTimeProgressObservable; } }
+
+        private FruitsPunchWaitTime _waitTimeManagerSource;
+        private FruitsPunchWaitTime _waitTimeManager
+        {
+            get
+            {
+                InitializeComponents();
+                return _waitTimeManagerSource;
+            }
+        }
+
+        /*
+        protected override void Awake()
+        {
+            base.Awake();
+
+            InitializeComponents();
+        }
+        */
+
+        void InitializeComponents()
+        {
+            if (ComponentsAreReady()) return;
+
+            _waitTimeManagerSource = gameObject.AddComponent<FruitsPunchWaitTime>();
+            _waitTimeManagerSource.Initialize(nextDeleteAvailableDuration);
+        }
+
+        bool ComponentsAreReady()
+        {
+            if (!_waitTimeManagerSource) return false;
+
+            return true;
+        }
 
         void Start()
         {
@@ -74,19 +105,6 @@ namespace FruitsPunchInGameScripts
 
         // OnClick MouseEvent Stream
         private IObservable<Vector3> _onMouseClickObservable { get; set; }
-
-        // Wait Time Relative Properties
-        private float _waitTimeForNextDelete = 0;
-        private float waitTimeForNextDelete
-        {
-            get { return _waitTimeForNextDelete; }
-            set
-            {
-                _waitTimeForNextDelete = value;
-                _waitTimeProgressStream.OnNext(_waitTimeForNextDelete / nextDeleteAvailableDuration);
-            }
-        }
-        private bool CanDelete() { { return _waitTimeForNextDelete <= 0; } }
 
         // Fever Point Relative Properties
         private float _feverProgress = 0;
@@ -109,13 +127,6 @@ namespace FruitsPunchInGameScripts
             _onMouseClickObservable = inputtable.MouseEventObservable
                                                .Where(x => x.state == MouseClickState.OnClick)
                                                .Select(x => x.position);
-
-            // update waittime for next delete
-            Observable.EveryUpdate()
-                      .Where(x => waitTimeForNextDelete > 0)
-                      .Select(x => Time.deltaTime)
-                      .Subscribe(x => waitTimeForNextDelete -= x)
-                      .AddTo(gameObject);
 
             Observable.EveryUpdate()
                       .Where(x => _isOnFever)
@@ -160,7 +171,7 @@ namespace FruitsPunchInGameScripts
 
         void DeleteFruits(GameObject[] fruits)
         {
-            if (!CanDelete()) return;
+            if (!_waitTimeManager.TryDelete()) return;
 
             foreach (var hit in fruits)
             {
@@ -168,13 +179,6 @@ namespace FruitsPunchInGameScripts
             }
 
             _deleteFruitsStream.OnNext(new Fruits(fruits));
-
-            SetWaitTimeForNextDelete();
-        }
-
-        void SetWaitTimeForNextDelete()
-        {
-            waitTimeForNextDelete = nextDeleteAvailableDuration;
         }
 
         void DropBalls()
