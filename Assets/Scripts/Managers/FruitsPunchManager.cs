@@ -51,9 +51,22 @@ namespace FruitsPunchInGameScripts
         public IObservable<Fruits> DeleteFruitsObservable { get { return _deleteFruitsStream.AsObservable(); } }
         private Subject<Fruits> _deleteFruitsStream = new Subject<Fruits>();
 
-        public IObservable<float> FeverPointProgressObservable { get { return _feverPointProgressStream.AsObservable(); } }
-        private BehaviorSubject<float> _feverPointProgressStream = new BehaviorSubject<float>(0);
+        // fever point relative properties
+        public IObservable<float> FeverPointProgressObservable { get { return _feverPointManager.FeverPointProgressObservable; } }
+        public bool IsOnFever { get { return _feverPointManager.IsOnFever; } }
+        public float CalculateRadius(float originalRadius) { return _feverPointManager.CalculateRadius(originalRadius); }
 
+        private FeverPoint _feverPointManagerSource;
+        private FeverPoint _feverPointManager
+        {
+            get
+            {
+                InitializeComponents();
+                return _feverPointManagerSource;
+            }
+        }
+
+        // wait time relative properties
         public IObservable<float> WaitTimeProgressObservable { get { return _waitTimeManager.WaitTimeProgressObservable; } }
 
         private WaitTime _waitTimeManagerSource;
@@ -66,26 +79,22 @@ namespace FruitsPunchInGameScripts
             }
         }
 
-        /*
-        protected override void Awake()
-        {
-            base.Awake();
-
-            InitializeComponents();
-        }
-        */
-
+        // add components to its gameobject and initialize
         void InitializeComponents()
         {
             if (ComponentsAreReady()) return;
 
             _waitTimeManagerSource = gameObject.AddComponent<WaitTime>();
             _waitTimeManagerSource.Initialize(nextDeleteAvailableDuration);
+
+            _feverPointManagerSource = gameObject.AddComponent<FeverPoint>();
+            _feverPointManagerSource.Initialize(timeToFinishFever, pointEarnForEachDelete);
         }
 
+        // check if components are ready
         bool ComponentsAreReady()
         {
-            if (!_waitTimeManagerSource) return false;
+            if (!_waitTimeManagerSource || !_feverPointManagerSource) return false;
 
             return true;
         }
@@ -94,7 +103,7 @@ namespace FruitsPunchInGameScripts
         {
             GameState.Instance.GameStateReactiveProperty
                               .Where(x => x == GameStateEnum.BeforeGameStart)
-                              .Subscribe(x => OnGameStart())
+                              .Subscribe(x => StartGame())
                               .AddTo(gameObject);
 
             GameState.Instance.GameStateReactiveProperty
@@ -106,53 +115,15 @@ namespace FruitsPunchInGameScripts
         // OnClick MouseEvent Stream
         private IObservable<Vector3> _onMouseClickObservable { get; set; }
 
-        // Fever Point Relative Properties
-        private float _feverProgress = 0;
-        private float feverProgress
-        {
-            get { return _feverProgress; }
-            set
-            {
-                _feverProgress = value;
-                _feverPointProgressStream.OnNext(_feverProgress);
-            }
-        }
-        private bool _isOnFever = false;
 
-        void OnGameStart()
+        void StartGame()
         {
             var inputtable = (IInputtable)InputManager.Instance;
 
             // create observable stream to notify every mouse event on click
             _onMouseClickObservable = inputtable.MouseEventObservable
-                                               .Where(x => x.state == MouseClickState.OnClick)
-                                               .Select(x => x.position);
-
-            Observable.EveryUpdate()
-                      .Where(x => _isOnFever)
-                      .Select(x => Time.deltaTime / timeToFinishFever)
-                      .Subscribe(x =>
-                      {
-                          feverProgress -= x;
-                          if (feverProgress <= 0)
-                          {
-                              feverProgress = 0f;
-                              _isOnFever = false;
-                          }
-                      })
-                      .AddTo(gameObject);
-
-            DeleteFruitsObservable.Where(x => !_isOnFever && x.Count >= 2)
-                                  .Subscribe(x =>
-                                  {
-                                      feverProgress += pointEarnForEachDelete * x.Count;
-                                      if (feverProgress > 1f)
-                                      {
-                                          feverProgress = 1f;
-                                          _isOnFever = true;
-                                      }
-                                  })
-                                  .AddTo(gameObject);
+                                                .Where(x => x.state == MouseClickState.OnClick)
+                                                .Select(x => x.position);
 
             DropBalls();
 
@@ -164,7 +135,7 @@ namespace FruitsPunchInGameScripts
             inputSubscription = this._onMouseClickObservable
                                     .Select(x => GetFruitAtThePosition(x))
                                     .Where(x => x)
-                                    .Select(x => GetAllFruitsAroundTheFruit(x, fruitDeleteRadius))
+                                    .Select(x => GetAllFruitsAroundTheFruit(x, CalculateRadius(fruitDeleteRadius)))
                                     .Subscribe(x => DeleteFruits(x))
                                     .AddTo(gameObject);
         }
@@ -198,8 +169,6 @@ namespace FruitsPunchInGameScripts
 
         GameObject[] GetAllFruitsAroundTheFruit(GameObject targetFruit, float radius)
         {
-            if (_isOnFever) radius *= 2;
-
             return GetAllFruitsAroundTheFruit(targetFruit, radius, true);
         }
 

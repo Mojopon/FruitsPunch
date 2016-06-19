@@ -7,5 +7,8 @@ namespace FruitsPunchInGameScripts
     public interface IFeverPointProgressObservable
     {
         IObservable<float> FeverPointProgressObservable { get; }
+        bool IsOnFever { get; }
+
+        float CalculateRadius(float originalRadius);
     }
 }
