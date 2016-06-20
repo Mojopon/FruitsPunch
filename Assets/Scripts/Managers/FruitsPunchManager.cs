@@ -37,8 +37,11 @@ namespace FruitsPunchInGameScripts
                                       IFruitsPunchInGameProperties,
                                       IFeverPointProgressObservable
     {
+        // the fruit prefab needs to have 2d collider and 2d rigidbody,
+        // and make it to be same layer as fruitLayer parameter
         public GameObject fruitPrefab;
         public Sprite[] fruitSprites;
+        // you need to prepare a layer for the fruits to raycast on it
         public LayerMask fruitLayer;
 
         [SerializeField]

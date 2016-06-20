@@ -5,17 +5,27 @@ using FruitsPunchInGameScripts;
 
 public class Loader : MonoBehaviour
 {
+    public InputManager inputManagerPrefab;
+    public ScoreManager scoreManagerPrefab;
+
+    // in game manager prefabs(these will going to be instantiated when the game started) 
     public FruitsPunchManager fruitsManagerPrefab;
     public DeletedFruitsParticle fruitsPunchParticleManagerPrefab;
     public GameTimerManager gameTimerManagerPrefab;
     public CountdownManager countdownManagerPrefab;
 
     private Transform managers;
+    private Transform inGameManagers;
     void Start()
     {
+        managers = new GameObject("Managers").transform;
+        Instantiate(inputManagerPrefab).transform.SetParent(managers);
+        Instantiate(scoreManagerPrefab).transform.SetParent(managers);
+
+
         GameState.Instance.GameStateReactiveProperty
                           .Where(x => x == GameStateEnum.BeforeGameStart)
-                          .Subscribe(x => InstantiateManagers())
+                          .Subscribe(x => InstantiateInGameManagers())
                           .AddTo(gameObject);
 
         GameState.Instance.GameStateReactiveProperty
@@ -24,23 +34,23 @@ public class Loader : MonoBehaviour
                   .AddTo(gameObject);
     }
 
-    void InstantiateManagers()
+    void InstantiateInGameManagers()
     {
-        if(managers == null)
-            managers = new GameObject("ManagersHolder").transform;
+        if(inGameManagers == null)
+            inGameManagers = new GameObject("InGameManagers").transform;
 
-        Instantiate(fruitsManagerPrefab).transform.SetParent(managers);
-        Instantiate(fruitsPunchParticleManagerPrefab).transform.SetParent(managers);
-        Instantiate(gameTimerManagerPrefab).transform.SetParent(managers);
-        Instantiate(countdownManagerPrefab).transform.SetParent(managers);
+        Instantiate(fruitsManagerPrefab).transform.SetParent(inGameManagers);
+        Instantiate(fruitsPunchParticleManagerPrefab).transform.SetParent(inGameManagers);
+        Instantiate(gameTimerManagerPrefab).transform.SetParent(inGameManagers);
+        Instantiate(countdownManagerPrefab).transform.SetParent(inGameManagers);
     }
 
     void DestroyManagers()
     {
-        if (managers != null)
+        if (inGameManagers != null)
         {
-            Destroy(managers.gameObject);
-            managers = null;
+            Destroy(inGameManagers.gameObject);
+            inGameManagers = null;
         }
     }
 }

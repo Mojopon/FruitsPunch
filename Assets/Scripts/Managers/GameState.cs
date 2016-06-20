@@ -9,6 +9,7 @@ public enum GameStateEnum
     InGame,
     GameOver,
     BeforeGoTitle,
+    Scoreboard,
 }
 
 public class GameState : SingletonMonoBehaviour<GameState>
