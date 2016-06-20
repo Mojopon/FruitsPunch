@@ -9,9 +9,9 @@ public class WaittimeRepresentingCircle : MonoBehaviour
     void Start()
     {
         FruitsPunchManager.ObservableInstance
-                     .Where(x => x != null)
-                     .Subscribe(x => SubscribeOnFruitsManager(x))
-                     .AddTo(gameObject);
+                          .Where(x => x != null)
+                          .Subscribe(x => SubscribeOnFruitsManager(x))
+                          .AddTo(gameObject);
     }
 
     void SubscribeOnFruitsManager(FruitsPunchManager instance)
@@ -20,7 +20,10 @@ public class WaittimeRepresentingCircle : MonoBehaviour
 
         instance.WaitTimeProgressObservable
                 .Select(x => Mathf.Clamp(x, 0, 1))
-                .Subscribe(x => circleImage.fillAmount = 1f - x)
+                .Subscribe(x => 
+                {
+                    circleImage.fillAmount = 1f - x;
+                })
                 .AddTo(gameObject);
     }
 }

@@ -36,22 +36,33 @@ namespace FruitsPunchInGameScripts
                                       IWaitTimeProgressObservable,
                                       IFruitsPunchInGameProperties,
                                       IFeverPointProgressObservable
-    { 
-        public float fruitDeleteRadius = 1f;
-        public Vector3 fruitsSpawnPoint = new Vector3(0, 12, 0);
-        public LayerMask fruitLayer;
-
+    {
         public GameObject fruitPrefab;
         public Sprite[] fruitSprites;
+        public LayerMask fruitLayer;
 
-        public float nextDeleteAvailableDuration = 0.8f;
-        public float timeToFinishFever = 8f;
-        public float pointEarnForEachDelete = 0.05f;
+        [SerializeField]
+        private float   _FruitDeleteRadius = 1f;
+        [SerializeField]
+        private Vector3 _FruitsSpawnPoint = new Vector3(0, 12, 0);
+        [SerializeField]
+        private float   _NextDeleteAvailableDuration = 0.8f;
+        [SerializeField]
+        private float   _TimeToFinishFever = 8f;
+        [SerializeField]
+        private float   _PointEarnForEachDelete = 0.05f;
+
+        // FruitsPunchIngameProperties Group
+        public float   FruitsDeleteRadius     { get { return _FruitDeleteRadius; } }
+        public Vector3 FruitsSpawnPoint       { get { return _FruitsSpawnPoint; } }
+        public float   GapTimeBetweenDelete   { get { return _NextDeleteAvailableDuration;  } }
+        public float   TimeToFinishFever      { get { return _TimeToFinishFever; } }
+        public float   GainFeverForEachDelete { get { return _PointEarnForEachDelete; } }
 
         public IObservable<Fruits> DeleteFruitsObservable { get { return _deleteFruitsStream.AsObservable(); } }
         private Subject<Fruits> _deleteFruitsStream = new Subject<Fruits>();
 
-        // fever point relative properties
+        // FeverPoint Relative Group
         public IObservable<float> FeverPointProgressObservable { get { return _feverPointManager.FeverPointProgressObservable; } }
         public bool IsOnFever { get { return _feverPointManager.IsOnFever; } }
         public float CalculateRadius(float originalRadius) { return _feverPointManager.CalculateRadius(originalRadius); }
@@ -66,7 +77,7 @@ namespace FruitsPunchInGameScripts
             }
         }
 
-        // wait time relative properties
+        // WaitTime Relative Group
         public IObservable<float> WaitTimeProgressObservable { get { return _waitTimeManager.WaitTimeProgressObservable; } }
 
         private WaitTime _waitTimeManagerSource;
@@ -85,10 +96,7 @@ namespace FruitsPunchInGameScripts
             if (ComponentsAreReady()) return;
 
             _waitTimeManagerSource = gameObject.AddComponent<WaitTime>();
-            _waitTimeManagerSource.Initialize(nextDeleteAvailableDuration);
-
             _feverPointManagerSource = gameObject.AddComponent<FeverPoint>();
-            _feverPointManagerSource.Initialize(timeToFinishFever, pointEarnForEachDelete);
         }
 
         // check if components are ready
@@ -114,8 +122,6 @@ namespace FruitsPunchInGameScripts
 
         // OnClick MouseEvent Stream
         private IObservable<Vector3> _onMouseClickObservable { get; set; }
-
-
         void StartGame()
         {
             var inputtable = (IInputtable)InputManager.Instance;
@@ -135,7 +141,7 @@ namespace FruitsPunchInGameScripts
             inputSubscription = this._onMouseClickObservable
                                     .Select(x => GetFruitAtThePosition(x))
                                     .Where(x => x)
-                                    .Select(x => GetAllFruitsAroundTheFruit(x, CalculateRadius(fruitDeleteRadius)))
+                                    .Select(x => GetAllFruitsAroundTheFruit(x, CalculateRadius(_FruitDeleteRadius)))
                                     .Subscribe(x => DeleteFruits(x))
                                     .AddTo(gameObject);
         }
@@ -218,8 +224,8 @@ namespace FruitsPunchInGameScripts
         {
             var fruit = Instantiate(fruitPrefab) as GameObject;
             var pos = fruit.transform.position;
-            pos.x = UnityEngine.Random.Range(fruitsSpawnPoint.x + -2.0f, fruitsSpawnPoint.x + 2.0f);
-            pos.y = fruitsSpawnPoint.y;
+            pos.x = UnityEngine.Random.Range(_FruitsSpawnPoint.x + -2.0f, _FruitsSpawnPoint.x + 2.0f);
+            pos.y = _FruitsSpawnPoint.y;
             fruit.transform.position = pos;
 
             var fruitTexture = fruit.GetComponent<SpriteRenderer>();

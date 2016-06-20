@@ -6,8 +6,8 @@ namespace FruitsPunchInGameScripts
 {
     public class FeverPoint : MonoBehaviour, IFeverPointProgressObservable
     {
-        private float timeToFinishFever;
-        private float pointEarnForEachDelete;
+        private float _timeToFinishFever;
+        private float _gainFeverForEachDelete;
 
         public IObservable<float> FeverPointProgressObservable { get { return _feverPointProgressStream.AsObservable(); } }
         private BehaviorSubject<float> _feverPointProgressStream = new BehaviorSubject<float>(0);
@@ -30,17 +30,14 @@ namespace FruitsPunchInGameScripts
             else return originalRadius;
         }
 
-        public void Initialize(float timeToFinishFever, float pointEarnForEachDelete)
-        {
-            this.timeToFinishFever = timeToFinishFever;
-            this.pointEarnForEachDelete = pointEarnForEachDelete;
-        }
-
         void Start()
         {
+            IFruitsPunchInGameProperties ingameProperties = FruitsPunchManager.Instance;
+            Initialize(ingameProperties);
+
             Observable.EveryUpdate()
                       .Where(x => IsOnFever)
-                      .Select(x => Time.deltaTime / timeToFinishFever)
+                      .Select(x => Time.deltaTime / _timeToFinishFever)
                       .Subscribe(x =>
                       {
                           feverProgress -= x;
@@ -56,7 +53,7 @@ namespace FruitsPunchInGameScripts
                                        .Where(x => !IsOnFever && x.Count >= 2)
                                        .Subscribe(x =>
                                        {
-                                           feverProgress += pointEarnForEachDelete * x.Count;
+                                           feverProgress += _gainFeverForEachDelete * x.Count;
                                            if (feverProgress > 1f)
                                            {
                                                feverProgress = 1f;
@@ -64,6 +61,13 @@ namespace FruitsPunchInGameScripts
                                            }
                                        })
                                        .AddTo(gameObject);
+        }
+
+        void Initialize(IFruitsPunchInGameProperties properties)
+        {
+
+            this._timeToFinishFever = properties.TimeToFinishFever;
+            this._gainFeverForEachDelete = properties.GainFeverForEachDelete;
         }
     }
 }
