@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
 using System.Collections.Generic;
 
-public class ScoreResource : MonoBehaviour, IScoreResource
+public class ScoreResourceMock : MonoBehaviour, IScoreResource
 {
     private List<ScoreData> scores = null;
 
     public IList<ScoreData> GetScores()
     {
-        if(scores == null)
+        if (scores == null)
         {
             InitializeScores();
         }
