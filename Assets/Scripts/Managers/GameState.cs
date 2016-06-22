@@ -34,6 +34,16 @@ public class GameState : SingletonMonoBehaviour<GameState>
         StartCoroutine(SequenceGameEnd());
     }
 
+    public void GoScoreboard()
+    {
+        StartCoroutine(SequenceGoScoreboard());
+    }
+
+    public void GoTitle()
+    {
+        StartCoroutine(SequenceGoTitle());
+    }
+
     IEnumerator SequenceGameStart()
     {
         _gameState.Value = GameStateEnum.BeforeGameStart;
@@ -65,6 +75,20 @@ public class GameState : SingletonMonoBehaviour<GameState>
         _gameState.Value = GameStateEnum.Title;
 
         yield return null;
+
+        yield break;
+    }
+
+    IEnumerator SequenceGoScoreboard()
+    {
+        _gameState.Value = GameStateEnum.Scoreboard;
+
+        yield break;
+    }
+
+    IEnumerator SequenceGoTitle()
+    {
+        _gameState.Value = GameStateEnum.Title;
 
         yield break;
     }

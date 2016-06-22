@@ -15,7 +15,7 @@ public class TitleUIs : MonoBehaviour
                           .AddTo(gameObject);
 
         GameState.Instance.GameStateReactiveProperty
-                          .Where(x => x == GameStateEnum.BeforeGameStart)
+                          .Where(x => !new GameStateEnum[] { GameStateEnum.BeforeGoTitle, GameStateEnum.Title }.Contains(x))
                           .Subscribe(x => SetActiveForTheObjects(false))
                           .AddTo(gameObject);
     }

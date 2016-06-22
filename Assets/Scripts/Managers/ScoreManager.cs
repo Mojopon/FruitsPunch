@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UniRx;
+using System.Collections;
 
 public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObservableScore
 {
