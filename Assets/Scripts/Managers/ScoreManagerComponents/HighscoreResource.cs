@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 using System.Collections.Generic;
 
-public class ScoreResourceMock : MonoBehaviour, IHighscoreResource
+public class HighscoreResource : MonoBehaviour, IHighscoreResource
 {
     private List<HighscoreData> scores = null;
 
     public IList<HighscoreData> GetHighscores()
     {
-        if (scores == null)
+        if(scores == null)
         {
             InitializeScores();
         }

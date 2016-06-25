@@ -68,13 +68,13 @@ public class ScorePanels : MonoBehaviour
     {
         if (subscription != null) subscription.Dispose();
 
-        subscription = scoreManager.ScoreDataObservable
+        subscription = scoreManager.HighScoreDataObservable
                                    .Where(x => x != null)
                                    .Subscribe(x => SetScores(x))
                                    .AddTo(gameObject);
     }
 
-    void SetScores(IList<ScoreData> scoreDatas)
+    void SetScores(IList<HighscoreData> scoreDatas)
     {
         if(scorePanelsNumber > scoreDatas.Count)
         {
@@ -88,7 +88,7 @@ public class ScorePanels : MonoBehaviour
         }
     }
 
-    void SetScore(int id, ScoreData scoreData)
+    void SetScore(int id, HighscoreData scoreData)
     {
         var scorePanel = scorePanelObjects[id];
 

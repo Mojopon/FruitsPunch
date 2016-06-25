@@ -3,33 +3,33 @@ using System.Collections.Generic;
 using UniRx;
 using System.Collections;
 
-public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObservableScore
+public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObservableHighscore
 {
-    public IObservable<IList<ScoreData>> ScoreDataObservable { get { return _scoreDataStream.AsObservable(); } }
-    private BehaviorSubject<IList<ScoreData>> _scoreDataStream = new BehaviorSubject<IList<ScoreData>>(null);
+    public IObservable<IList<HighscoreData>> HighScoreDataObservable { get { return _highscoreDataStream.AsObservable(); } }
+    private BehaviorSubject<IList<HighscoreData>> _highscoreDataStream = new BehaviorSubject<IList<HighscoreData>>(null);
 
     void Start()
     {
-        _scoreDataStream.OnNext(GetScores());
+        _highscoreDataStream.OnNext(GetHighscores());
     }
 
-    private IList<ScoreData> GetScores()
+    private IList<HighscoreData> GetHighscores()
     {
-        if(scoreResource == null)
+        if(highscoreResource == null)
         {
             PrepareResource();
         }
 
-        return scoreResource.GetScores();
+        return highscoreResource.GetHighscores();
     }
 
-    private IScoreResource scoreResource;
+    private IHighscoreResource highscoreResource;
     void PrepareResource()
     {
         // requires IScoreResource Component
-        scoreResource = GetComponent<IScoreResource>();
+        highscoreResource = GetComponent<IHighscoreResource>();
 
         // add ScoreResource if its still null
-        if (scoreResource == null) scoreResource = gameObject.AddComponent<ScoreResource>();
+        if (highscoreResource == null) highscoreResource = gameObject.AddComponent<HighscoreResource>();
     }
 }
