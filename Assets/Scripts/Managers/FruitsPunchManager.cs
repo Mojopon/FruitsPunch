@@ -140,8 +140,10 @@ namespace FruitsPunchInGameScripts
                                                 .Where(x => x.state == MouseClickState.OnClick)
                                                 .Select(x => x.position);
 
+            // start receiving mouse inputs
             SubscribeMouseInput();
 
+            // subscribe gamestate to dispose mouse inputs when game is over
             GameState.Instance.GameStateReactiveProperty
                               .Where(x => x == GameStateEnum.GameOver)
                               .Subscribe(x =>
@@ -153,6 +155,7 @@ namespace FruitsPunchInGameScripts
 
         void SubscribeMouseInput()
         {
+            // begin deleting clicked fruits
             inputSubscription = this._onMouseClickObservable
                                     .Select(x => GetFruitAtThePosition(x))
                                     .Where(x => x)
