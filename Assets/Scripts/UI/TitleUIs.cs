@@ -10,12 +10,12 @@ public class TitleUIs : MonoBehaviour
 	void Start ()
     {
         GameState.Instance.GameStateReactiveProperty
-                          .Where(x => new GameStateEnum[] { GameStateEnum.BeforeGoTitle, GameStateEnum.Title }.Contains(x))
+                          .Where(x => new GameStateEnum[] { GameStateEnum.DiscardFruitsPunch, GameStateEnum.Title }.Contains(x))
                           .Subscribe(x => SetActiveForTheObjects(true))
                           .AddTo(gameObject);
 
         GameState.Instance.GameStateReactiveProperty
-                          .Where(x => !new GameStateEnum[] { GameStateEnum.BeforeGoTitle, GameStateEnum.Title }.Contains(x))
+                          .Where(x => !new GameStateEnum[] { GameStateEnum.DiscardFruitsPunch, GameStateEnum.Title }.Contains(x))
                           .Subscribe(x => SetActiveForTheObjects(false))
                           .AddTo(gameObject);
     }

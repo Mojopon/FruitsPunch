@@ -29,7 +29,7 @@ public class Loader : MonoBehaviour
                           .AddTo(gameObject);
 
         GameState.Instance.GameStateReactiveProperty
-                  .Where(x => x == GameStateEnum.GameOver)
+                  .Where(x => x == GameStateEnum.DiscardFruitsPunch)
                   .Subscribe(x => DestroyManagers())
                   .AddTo(gameObject);
     }

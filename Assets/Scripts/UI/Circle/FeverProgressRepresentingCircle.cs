@@ -10,7 +10,7 @@ public class FeverProgressRepresentingCircle : MonoBehaviour
     {
         GameState.Instance
                  .GameStateReactiveProperty
-                 .Where(x => x == GameStateEnum.BeforeGoTitle || x == GameStateEnum.Title)
+                 .Where(x => x == GameStateEnum.DiscardFruitsPunch || x == GameStateEnum.Title)
                  .Subscribe(x => GetComponent<Image>().fillAmount = 0)
                  .AddTo(gameObject);
 

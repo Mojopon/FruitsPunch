@@ -12,11 +12,10 @@ public class GameTimerManager : ReactiveSingletonMonoBehaviour<GameTimerManager>
     private IDisposable _timerDisposable;
 
     private readonly ReactiveProperty<int> _timerReactiveProperty = new IntReactiveProperty(0);
+    public ReadOnlyReactiveProperty<int> GameTime { get { return _timerReactiveProperty.ToReadOnlyReactiveProperty(); } }
 
-    public ReadOnlyReactiveProperty<int> GameTime
-    {
-        get { return _timerReactiveProperty.ToReadOnlyReactiveProperty(); }
-    }
+    private ISubject<Unit> _timeUpStream = new Subject<Unit>();
+    public IObservable<Unit> TimeUpObservable { get { return _timeUpStream.AsObservable(); } }
 
     void Start()
     {
@@ -33,10 +32,20 @@ public class GameTimerManager : ReactiveSingletonMonoBehaviour<GameTimerManager>
     void TimerStart()
     {
         _timerDisposable = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1))
-                                     .Subscribe(_ => 
+                                     .TakeWhile(x => _timerReactiveProperty.Value > 0)
+                                     .Subscribe(x => 
                                      {
                                          _timerReactiveProperty.Value--;
                                      }) 
                                      .AddTo(gameObject);
+
+        GameTime.Where(x => x <= 0)
+                .First()
+                .Subscribe(x => 
+                {
+                    _timeUpStream.OnNext(Unit.Default);
+                    _timeUpStream.OnCompleted();
+                })
+                .AddTo(gameObject);
     }
 }

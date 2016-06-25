@@ -119,13 +119,19 @@ namespace FruitsPunchInGameScripts
 
             GameState.Instance.GameStateReactiveProperty
                               .Where(x => x == GameStateEnum.InGame)
-                              .Subscribe(x => StartReceivingMouseInput())
+                              .Subscribe(x => StartReceivingInputs())
                               .AddTo(gameObject);
         }
 
         // OnClick MouseEvent Stream
         private IObservable<Vector3> _onMouseClickObservable { get; set; }
         void StartGame()
+        {
+            DropBalls();
+        }
+
+        private IDisposable inputSubscription;
+        void StartReceivingInputs()
         {
             var inputtable = (IInputtable)InputManager.Instance;
 
@@ -134,12 +140,18 @@ namespace FruitsPunchInGameScripts
                                                 .Where(x => x.state == MouseClickState.OnClick)
                                                 .Select(x => x.position);
 
-            DropBalls();
+            SubscribeMouseInput();
 
+            GameState.Instance.GameStateReactiveProperty
+                              .Where(x => x == GameStateEnum.GameOver)
+                              .Subscribe(x =>
+                              {
+                                  DisposeMouseInput();
+                              })
+                              .AddTo(gameObject);
         }
 
-        private IDisposable inputSubscription;
-        void StartReceivingMouseInput()
+        void SubscribeMouseInput()
         {
             inputSubscription = this._onMouseClickObservable
                                     .Select(x => GetFruitAtThePosition(x))
@@ -147,6 +159,15 @@ namespace FruitsPunchInGameScripts
                                     .Select(x => GetAllFruitsAroundTheFruit(x, CalculateRadius(_FruitDeleteRadius)))
                                     .Subscribe(x => DeleteFruits(x))
                                     .AddTo(gameObject);
+        }
+
+        void DisposeMouseInput()
+        {
+            if (inputSubscription != null)
+            {
+                inputSubscription.Dispose();
+                inputSubscription = null;
+            }
         }
 
         void DeleteFruits(GameObject[] fruits)

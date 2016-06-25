@@ -8,7 +8,7 @@ public enum GameStateEnum
     BeforeGameStart,
     InGame,
     GameOver,
-    BeforeGoTitle,
+    DiscardFruitsPunch,
     Scoreboard,
 }
 
@@ -32,6 +32,7 @@ public class GameState : SingletonMonoBehaviour<GameState>
     public void EndGame()
     {
         StartCoroutine(SequenceGameEnd());
+
     }
 
     public void GoScoreboard()
@@ -59,6 +60,10 @@ public class GameState : SingletonMonoBehaviour<GameState>
 
         yield return null;
 
+        GameTimerManager.Instance.TimeUpObservable
+                                 .Subscribe(x => StartCoroutine(SequenceGameEnd()))
+                                 .AddTo(GameTimerManager.Instance);
+
         yield break;
     }
 
@@ -66,15 +71,17 @@ public class GameState : SingletonMonoBehaviour<GameState>
     {
         _gameState.Value = GameStateEnum.GameOver;
 
-        yield return null;
+        yield return new WaitForSeconds(3);
 
-        _gameState.Value = GameStateEnum.BeforeGoTitle;
+        _gameState.Value = GameStateEnum.DiscardFruitsPunch;
 
         yield return null;
 
         _gameState.Value = GameStateEnum.Title;
 
         yield return null;
+
+        StopAllCoroutines();
 
         yield break;
     }
