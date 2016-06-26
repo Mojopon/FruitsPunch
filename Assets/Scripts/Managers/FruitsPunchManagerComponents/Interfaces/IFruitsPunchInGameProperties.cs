@@ -4,10 +4,8 @@ using UniRx;
 
 namespace FruitsPunchInGameScripts
 {
-    public interface IFruitsPunchInGameProperties
+    public interface IFruitsPunchInGameProperties : IDeletedFruitsObservable
     {
-        IObservable<Fruits> DeleteFruitsObservable { get; }
-
         float   FruitsDeleteRadius     { get; }
         Vector3 FruitsSpawnPoint       { get; }
         float   GapTimeBetweenDelete   { get; }

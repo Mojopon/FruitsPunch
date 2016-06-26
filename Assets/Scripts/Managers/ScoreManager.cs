@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UniRx;
 using System.Collections;
+using FruitsPunchInGameScripts;
 
 public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObservableHighscore
 {
@@ -23,6 +24,25 @@ public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObser
                           .Where(x => x == GameStateEnum.DiscardFruitsPunch)
                           .Subscribe(x => ResetScore())
                           .AddTo(gameObject);
+
+        FruitsPunchManager.ObservableInstance
+                          .Where(x => x != null)
+                          .Subscribe(x => ObserveOnDeletedFruits(x))
+                          .AddTo(gameObject);
+    }
+
+    void ObserveOnDeletedFruits(FruitsPunchManager instance)
+    {
+        var observable = instance as IDeletedFruitsObservable;
+
+        observable.DeleteFruitsObservable
+                  .Subscribe(x => GainScoreOnFruitsDeleted(x))
+                  .AddTo(instance);
+    }
+
+    void GainScoreOnFruitsDeleted(Fruits fruits)
+    {
+        _scoreReactiveProperty.Value += fruits.Count * _ScoreGainPerFruit;
     }
 
     void ResetScore()
