@@ -4,34 +4,38 @@ using UnityEngine.UI;
 
 public class ScorePanel : MonoBehaviour
 {
+
     [SerializeField]
-    private int _Rank;
+    private Text _RankText;
     [SerializeField]
     private Text _ScoreText;
     [SerializeField]
-    private Text _PlayerNameText;
+    private Text _ComboText;
 
     [SerializeField]
-    private int _score = 0;
+    private int _Rank = 0;
     [SerializeField]
-    private string _playerName = "";
+    private int _Score = 0;
+    [SerializeField]
+    private int _Combo = 0;
 
-    public void SetScore(int rank, int score, string playerName)
+    public void SetScore(int rank, int score, int combo)
     {
         _Rank = rank;
-        _score = score;
-        _playerName = playerName;
+        _Score = score;
+        _Combo = combo;
         UpdateScore();
     }
 
     public void UpdateScore()
     {
-        if(_ScoreText)
-            _ScoreText.text = FormattedScore;
-        
-        if(_PlayerNameText)
-            _PlayerNameText.text = _playerName;
-    }
+        if (_RankText)
+            _RankText.text = _Rank.ToString();
 
-    private string FormattedScore { get { return _Rank.ToString() + ". " + _score.ToString(); } }
+        if (_ScoreText)
+            _ScoreText.text = _Score.ToString();
+        
+        if(_ComboText)
+            _ComboText.text = _Combo.ToString();
+    }
 }

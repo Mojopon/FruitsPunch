@@ -24,21 +24,21 @@ public class HighscoreResource : MonoBehaviour, IHighscoreResource
 
     private HighscoreData GetRankedScore(int rank)
     {
-        var nameParam = "aaa";
+        var comboParam = 10;
         var scoreParam = 999;
 
-        return new HighscoreData() { name = nameParam, score = scoreParam };
+        return new HighscoreData() { combo = comboParam, score = scoreParam };
     }
 
     private List<HighscoreData> DefaultTable()
     {
         return new List<HighscoreData>
         {
-            new HighscoreData() { name = "aaaaa", score = 5000 },
-            new HighscoreData() { name = "bbbbb", score = 4000 },
-            new HighscoreData() { name = "ccccc", score = 3000 },
-            new HighscoreData() { name = "ddddd", score = 2000 },
-            new HighscoreData() { name = "eeeee", score = 1000 },
+            new HighscoreData() { combo = 10, score = 5000 },
+            new HighscoreData() { combo = 8, score = 4000 },
+            new HighscoreData() { combo = 6, score = 3000 },
+            new HighscoreData() { combo = 4, score = 2000 },
+            new HighscoreData() { combo = 2, score = 1000 },
         };
     }
 }

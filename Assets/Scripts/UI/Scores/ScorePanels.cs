@@ -92,6 +92,6 @@ public class ScorePanels : MonoBehaviour
     {
         var scorePanel = scorePanelObjects[id];
 
-        scorePanel.SetScore(id + 1, scoreData.score, scoreData.name);
+        scorePanel.SetScore(id + 1, scoreData.score, scoreData.combo);
     }
 }
