@@ -3,6 +3,7 @@ using System.Collections;
 using UniRx;
 using System;
 using System.Collections.Generic;
+using ScoreManagerComponents;
 
 public class ScorePanels : MonoBehaviour
 {

@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using UniRx;
 
-public interface IHighscoreResource
+
+namespace ScoreManagerComponents
 {
-    IList<HighscoreData> GetHighscores();
+    public interface IHighscoreResource
+    {
+        IList<HighscoreData> GetHighscores();
+    }
 }

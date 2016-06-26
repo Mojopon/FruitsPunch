@@ -1,5 +1,8 @@
-﻿public struct HighscoreData
+﻿namespace ScoreManagerComponents
 {
-    public int score;
-    public int combo;
+    public struct HighscoreData
+    {
+        public int score;
+        public int combo;
+    }
 }

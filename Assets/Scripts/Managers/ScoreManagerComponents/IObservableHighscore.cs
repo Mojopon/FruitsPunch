@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using UniRx;
 
-public interface IObservableHighscore
+namespace ScoreManagerComponents
 {
-    IObservable<IList<HighscoreData>> HighScoreDataObservable { get; }
+    public interface IObservableHighscore
+    {
+        IObservable<IList<HighscoreData>> HighScoreDataObservable { get; }
+    }
 }

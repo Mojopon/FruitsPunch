@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UniRx;
 using System.Collections;
 using FruitsPunchInGameScripts;
+using ScoreManagerComponents;
 
 public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObservableHighscore
 {
