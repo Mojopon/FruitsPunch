@@ -4,9 +4,8 @@ using UniRx;
 
 namespace ScoreManagerComponents
 {
-    public interface IHighscoreResource
+    public interface IHighscoreResource : IAddHighscore
     {
         IHighscores GetHighscores();
-        bool AddHighscore(HighscoreData newScore);
     }
 }

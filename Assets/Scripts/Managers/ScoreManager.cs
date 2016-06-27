@@ -19,9 +19,12 @@ public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObser
     void Start()
     {
         ResetScore();
-        _highscoreDataStream.OnNext(GetHighscores());
+        _highscoreDataStream.OnNext(GetHighscoresFromTheResource());
 
-
+        GameState.Instance.GameStateReactiveProperty
+                          .Where(x => x == GameStateEnum.GameOver)
+                          .Subscribe(x => SaveHighscore())
+                          .AddTo(gameObject);
 
         GameState.Instance.GameStateReactiveProperty
                           .Where(x => x == GameStateEnum.DiscardFruitsPunch)
@@ -48,28 +51,37 @@ public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObser
         _scoreReactiveProperty.Value += fruits.Count * _ScoreGainPerFruit;
     }
 
+    void SaveHighscore()
+    {
+        if(_highscoreResource.AddHighscore(HighscoreData.Create(_scoreReactiveProperty.Value, 10)))
+        {
+            // notify to highscore observers when the new score is added
+            _highscoreDataStream.OnNext(GetHighscoresFromTheResource());
+        }
+    }
+
     void ResetScore()
     {
         _scoreReactiveProperty.Value = 0;
     }
 
-    private IHighscores GetHighscores()
+    private IHighscores GetHighscoresFromTheResource()
     {
-        if(highscoreResource == null)
+        if(_highscoreResource == null)
         {
             PrepareResource();
         }
 
-        return highscoreResource.GetHighscores();
+        return _highscoreResource.GetHighscores();
     }
 
-    private IHighscoreResource highscoreResource;
+    private IHighscoreResource _highscoreResource;
     void PrepareResource()
     {
         // requires IScoreResource Component
-        highscoreResource = GetComponent<IHighscoreResource>();
+        _highscoreResource = GetComponent<IHighscoreResource>();
 
         // add ScoreResource if its still null
-        if (highscoreResource == null) highscoreResource = gameObject.AddComponent<HighscoreResource>();
+        if (_highscoreResource == null) _highscoreResource = gameObject.AddComponent<HighscoreResource>();
     }
 }

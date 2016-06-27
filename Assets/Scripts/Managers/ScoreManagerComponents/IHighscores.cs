@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 namespace ScoreManagerComponents
 {
-    public interface IHighscores : IEnumerable<HighscoreData>
+    public interface IHighscores : IEnumerable<HighscoreData>, IAddHighscore
     {
         HighscoreData this[int index] { get; }
-        bool AddHighscore(HighscoreData newScore);
         int Count { get; }
     }
 }

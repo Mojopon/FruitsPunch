@@ -9,16 +9,16 @@ namespace ScoreManagerComponents
     public class HighscoreResource : MonoBehaviour, IHighscoreResource
     {
         #region Related to get Highscore
-        private IHighscores scores = null;
+        private IHighscores highscores = null;
 
         public IHighscores GetHighscores()
         {
-            if (scores == null)
+            if (highscores == null)
             {
-                scores = new Highscores();
+                highscores = new Highscores();
             }
 
-            return scores;
+            return highscores;
         }
 
         #endregion
@@ -27,7 +27,7 @@ namespace ScoreManagerComponents
 
         public bool AddHighscore(HighscoreData newScore)
         {
-            throw new NotImplementedException();
+            return highscores.AddHighscore(newScore);
         }
 
         #endregion
