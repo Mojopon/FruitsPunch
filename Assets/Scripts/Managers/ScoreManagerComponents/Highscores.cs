@@ -7,26 +7,43 @@ namespace ScoreManagerComponents
 
     public class Highscores : IHighscores
     {
-        private readonly int maxHighscores = 5;
+        public static readonly int maxHighscoreTables = 5;
 
         private List<HighscoreData> highscoreDatas = new List<HighscoreData>();
 
         public Highscores()
         {
-
+            CreateDefaultHighscoreTables();
         }
 
-        public HighscoreData this[int index]
+        private void CreateDefaultHighscoreTables()
         {
-            get
+            for(int i = 0; i < maxHighscoreTables; i++)
             {
-                throw new NotImplementedException();
+                highscoreDatas.Add(HighscoreData.Create());
             }
         }
 
+        public HighscoreData this[int index] { get { return highscoreDatas[index];  } }
+
         public bool AddHighscore(HighscoreData newScore)
         {
-            throw new NotImplementedException();
+            // never add a score already be added
+            if(highscoreDatas.Contains(newScore))
+            {
+                return false;
+            }
+
+            // add the new score first
+            highscoreDatas.Add(newScore);
+
+            // Sort it by Highscores(its decendant)
+            highscoreDatas.Sort();
+
+            // Remove smallest Highscore from the Highscores
+            highscoreDatas.RemoveAt(highscoreDatas.Count - 1);
+
+            return highscoreDatas.Contains(newScore);
         }
 
         public IEnumerator<HighscoreData> GetEnumerator()
@@ -38,5 +55,7 @@ namespace ScoreManagerComponents
         {
             return highscoreDatas.GetEnumerator();
         }
+
+        public int Count { get { return highscoreDatas.Count; } }
     }
 }
