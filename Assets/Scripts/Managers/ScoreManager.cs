@@ -10,8 +10,8 @@ public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObser
     [SerializeField]
     private int _ScoreGainPerFruit = 100;
 
-    public IObservable<IList<HighscoreData>> HighScoreDataObservable { get { return _highscoreDataStream.AsObservable(); } }
-    private BehaviorSubject<IList<HighscoreData>> _highscoreDataStream = new BehaviorSubject<IList<HighscoreData>>(null);
+    public IObservable<IHighscores> HighScoreDataObservable { get { return _highscoreDataStream.AsObservable(); } }
+    private BehaviorSubject<IHighscores> _highscoreDataStream = new BehaviorSubject<IHighscores>(null);
 
     public ReadOnlyReactiveProperty<int> ScoreReactiveProperty { get { return _scoreReactiveProperty.ToReadOnlyReactiveProperty(); } }
     private ReactiveProperty<int> _scoreReactiveProperty = new ReactiveProperty<int>(0);
@@ -20,6 +20,8 @@ public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObser
     {
         ResetScore();
         _highscoreDataStream.OnNext(GetHighscores());
+
+
 
         GameState.Instance.GameStateReactiveProperty
                           .Where(x => x == GameStateEnum.DiscardFruitsPunch)
@@ -51,7 +53,7 @@ public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObser
         _scoreReactiveProperty.Value = 0;
     }
 
-    private IList<HighscoreData> GetHighscores()
+    private IHighscores GetHighscores()
     {
         if(highscoreResource == null)
         {

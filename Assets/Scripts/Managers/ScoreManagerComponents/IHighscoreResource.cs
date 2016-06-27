@@ -6,7 +6,7 @@ namespace ScoreManagerComponents
 {
     public interface IHighscoreResource
     {
-        IList<HighscoreData> GetHighscores();
+        IHighscores GetHighscores();
         bool AddHighscore(HighscoreData newScore);
     }
 }

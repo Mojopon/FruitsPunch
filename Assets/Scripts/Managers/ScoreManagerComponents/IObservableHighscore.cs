@@ -5,6 +5,6 @@ namespace ScoreManagerComponents
 {
     public interface IObservableHighscore
     {
-        IObservable<IList<HighscoreData>> HighScoreDataObservable { get; }
+        IObservable<IHighscores> HighScoreDataObservable { get; }
     }
 }

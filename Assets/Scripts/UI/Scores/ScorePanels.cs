@@ -75,11 +75,11 @@ public class ScorePanels : MonoBehaviour
                                    .AddTo(gameObject);
     }
 
-    void SetScores(IList<HighscoreData> scoreDatas)
+    void SetScores(IHighscores scoreDatas)
     {
         if(scorePanelsNumber > scoreDatas.Count)
         {
-            // it should has more scorepanels than the count given from the score datas
+            // it should has more scorepanels to be displayed than the score data tables count
             Debug.LogError("something weird is happenned in ScorePanels");
         }
 

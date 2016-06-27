@@ -8,5 +8,6 @@ namespace ScoreManagerComponents
     {
         HighscoreData this[int index] { get; }
         bool AddHighscore(HighscoreData newScore);
+        int Count { get; }
     }
 }
