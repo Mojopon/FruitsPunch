@@ -4,7 +4,7 @@ using System;
 using UniRx;
 using UnityEngine.UI;
 
-public class GameTimerManager : ReactiveSingletonMonoBehaviour<GameTimerManager>
+public class GameTimerManager : ObservableSingletonMonoBehaviour<GameTimerManager>
 {
     [SerializeField]
     private int limitTime = 60;

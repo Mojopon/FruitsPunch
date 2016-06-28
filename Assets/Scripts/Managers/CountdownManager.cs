@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UniRx;
 using System;
 
-public class CountdownManager : ReactiveSingletonMonoBehaviour<CountdownManager>
+public class CountdownManager : ObservableSingletonMonoBehaviour<CountdownManager>
 {
     private readonly ISubject<int> _countdownSubject = new Subject<int>();
     public IObservable<int> CountdownObservable { get { return _countdownSubject.AsObservable(); } }

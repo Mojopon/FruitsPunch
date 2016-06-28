@@ -2,7 +2,7 @@
 using System.Collections;
 using UniRx;
 
-public class ReactiveSingletonMonoBehaviour<T> : SingletonMonoBehaviour<T> where T : MonoBehaviour
+public class ObservableSingletonMonoBehaviour<T> : SingletonMonoBehaviour<T> where T : MonoBehaviour
 {
     public static IObservable<T> ObservableInstance { get { return instanceStream.AsObservable(); } }
 

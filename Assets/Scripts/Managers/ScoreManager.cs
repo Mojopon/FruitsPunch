@@ -5,7 +5,7 @@ using System.Collections;
 using FruitsPunchInGameScripts;
 using ScoreManagerComponents;
 
-public class ScoreManager : ReactiveSingletonMonoBehaviour<ScoreManager>, IObservableHighscore
+public class ScoreManager : ObservableSingletonMonoBehaviour<ScoreManager>, IObservableHighscore
 {
     [SerializeField]
     private int _ScoreGainPerFruit = 100;

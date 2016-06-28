@@ -32,7 +32,7 @@ namespace FruitsPunchInGameScripts
         }
     }
 
-    public class FruitsPunchManager : ReactiveSingletonMonoBehaviour<FruitsPunchManager>,
+    public class FruitsPunchManager : ObservableSingletonMonoBehaviour<FruitsPunchManager>,
                                       IWaitTimeProgressObservable,
                                       IFruitsPunchInGameProperties,
                                       IFeverPointProgressObservable
