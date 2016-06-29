@@ -49,39 +49,30 @@ public class ScoreManager : ObservableSingletonMonoBehaviour<ScoreManager>, IObs
     {
         var observable = instance as IDeleteFruitsObservable;
 
+        // create deleted count stream from DeleteFruitsObservable
         var deletedCountStream = observable.DeleteFruitsObservable
                                            .Take(1)
                                            .Select(x => x.Count);
 
+        // create combo count stream
         var comboCountStream = observable.ComboReactiveProperty
                                          .Skip(1)
                                          .Take(1);
 
+        // merge two streams and calculate score when it the streams are completed
         Observable.WhenAll(deletedCountStream, comboCountStream)
                   .Do(x => OnScoreGain(x[0], x[1]))
                   .Subscribe(x => ObserveOnDeletedFruits(instance))
                   .AddTo(instance);
-
-        /*
-        observable.DeleteFruitsObservable
-                  .Subscribe(x => GainScoreOnFruitsDeleted(x))
-                  .AddTo(instance);
-        */
     }
 
+    // Calculate score from the given number of deleted fruits and the combo
     void OnScoreGain(int number, int combo)
     {
         _scoreReactiveProperty.Value += (number * _ScoreGainPerFruit) + combo * 10;
 
         if (combo > _maxCombo) _maxCombo = combo;
     }
-
-    /*
-    void GainScoreOnFruitsDeleted(Fruits fruits)
-    {
-        _scoreReactiveProperty.Value += fruits.Count * _ScoreGainPerFruit;
-    }
-    */
 
     void SaveHighscore()
     {
