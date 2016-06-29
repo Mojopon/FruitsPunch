@@ -39,7 +39,7 @@ public class ScoreManager : ObservableSingletonMonoBehaviour<ScoreManager>, IObs
 
     void ObserveOnDeletedFruits(FruitsPunchManager instance)
     {
-        var observable = instance as IDeletedFruitsObservable;
+        var observable = instance as IDeleteFruitsObservable;
 
         observable.DeleteFruitsObservable
                   .Subscribe(x => GainScoreOnFruitsDeleted(x))

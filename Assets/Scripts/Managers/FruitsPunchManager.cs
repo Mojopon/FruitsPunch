@@ -54,6 +54,8 @@ namespace FruitsPunchInGameScripts
         private float   _TimeToFinishFever = 8f;
         [SerializeField]
         private float   _PointEarnForEachDelete = 0.05f;
+        [SerializeField]
+        private int _RemainComboCount = 3;
 
         // FruitsPunchIngameProperties Group
         public float   FruitsDeleteRadius     { get { return _FruitDeleteRadius; } }
@@ -64,6 +66,9 @@ namespace FruitsPunchInGameScripts
 
         public IObservable<Fruits> DeleteFruitsObservable { get { return _deleteFruitsStream.AsObservable(); } }
         private Subject<Fruits> _deleteFruitsStream = new Subject<Fruits>();
+
+        public ReadOnlyReactiveProperty<int> ComboObservable { get { return _comboReactiveProperty.ToReadOnlyReactiveProperty(); } }
+        private ReactiveProperty<int> _comboReactiveProperty = new ReactiveProperty<int>(0);
 
         // FeverPoint Relative Group
         public IObservable<float> FeverPointProgressObservable { get { return _feverPointManager.FeverPointProgressObservable; } }
@@ -127,7 +132,21 @@ namespace FruitsPunchInGameScripts
         private IObservable<Vector3> _onMouseClickObservable { get; set; }
         void StartGame()
         {
+            // Observe on DeleteFruitsObservable to see if combo remains
+            this.DeleteFruitsObservable.Select(x => x.Count)
+                                       .Subscribe(x => CountCombo(x))
+                                       .AddTo(gameObject);
+
             DropBalls();
+        }
+
+        // check to see continue the combo or stop it
+        void CountCombo(int deleteCount)
+        {
+            if (deleteCount >= _RemainComboCount)
+                _comboReactiveProperty.Value++;
+            else
+                _comboReactiveProperty.Value = 0;
         }
 
         private IDisposable inputSubscription;

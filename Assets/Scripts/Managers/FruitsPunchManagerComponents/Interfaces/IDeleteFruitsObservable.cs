@@ -3,7 +3,8 @@ using System.Collections;
 using UniRx;
 using FruitsPunchInGameScripts;
 
-public interface IDeletedFruitsObservable
+public interface IDeleteFruitsObservable
 {
     IObservable<Fruits> DeleteFruitsObservable { get; }
+    ReadOnlyReactiveProperty<int> ComboObservable { get; }
 }
