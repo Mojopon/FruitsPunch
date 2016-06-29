@@ -16,6 +16,7 @@ public class ScoreManager : ObservableSingletonMonoBehaviour<ScoreManager>, IObs
     public ReadOnlyReactiveProperty<int> ScoreReactiveProperty { get { return _scoreReactiveProperty.ToReadOnlyReactiveProperty(); } }
     private ReactiveProperty<int> _scoreReactiveProperty = new ReactiveProperty<int>(0);
 
+    private int _maxCombo;
     void Start()
     {
         ResetScore();
@@ -37,32 +38,58 @@ public class ScoreManager : ObservableSingletonMonoBehaviour<ScoreManager>, IObs
                           .AddTo(gameObject);
     }
 
-    void ObserveOnDeletedFruits(FruitsPunchManager instance)
-    {
-        var observable = instance as IDeleteFruitsObservable;
-
-        observable.DeleteFruitsObservable
-                  .Subscribe(x => GainScoreOnFruitsDeleted(x))
-                  .AddTo(instance);
-    }
-
-    void GainScoreOnFruitsDeleted(Fruits fruits)
-    {
-        _scoreReactiveProperty.Value += fruits.Count * _ScoreGainPerFruit;
-    }
-
-    void SaveHighscore()
-    {
-        if(_highscoreResource.AddHighscore(HighscoreData.Create(_scoreReactiveProperty.Value, 10)))
-        {
-            // notify to highscore observers when the new score is added
-            _highscoreDataStream.OnNext(GetHighscoresFromTheResource());
-        }
-    }
 
     void ResetScore()
     {
         _scoreReactiveProperty.Value = 0;
+        _maxCombo = 0;
+    }
+
+    void ObserveOnDeletedFruits(FruitsPunchManager instance)
+    {
+        var observable = instance as IDeleteFruitsObservable;
+
+        var deletedCountStream = observable.DeleteFruitsObservable
+                                           .Take(1)
+                                           .Select(x => x.Count);
+
+        var comboCountStream = observable.ComboReactiveProperty
+                                         .Skip(1)
+                                         .Take(1);
+
+        Observable.WhenAll(deletedCountStream, comboCountStream)
+                  .Do(x => OnScoreGain(x[0], x[1]))
+                  .Subscribe(x => ObserveOnDeletedFruits(instance))
+                  .AddTo(instance);
+
+        /*
+        observable.DeleteFruitsObservable
+                  .Subscribe(x => GainScoreOnFruitsDeleted(x))
+                  .AddTo(instance);
+        */
+    }
+
+    void OnScoreGain(int number, int combo)
+    {
+        _scoreReactiveProperty.Value += (number * _ScoreGainPerFruit) + combo * 10;
+
+        if (combo > _maxCombo) _maxCombo = combo;
+    }
+
+    /*
+    void GainScoreOnFruitsDeleted(Fruits fruits)
+    {
+        _scoreReactiveProperty.Value += fruits.Count * _ScoreGainPerFruit;
+    }
+    */
+
+    void SaveHighscore()
+    {
+        if(_highscoreResource.AddHighscore(HighscoreData.Create(_scoreReactiveProperty.Value, _maxCombo)))
+        {
+            // notify to highscore observers when the new score is added
+            _highscoreDataStream.OnNext(GetHighscoresFromTheResource());
+        }
     }
 
     private IHighscores GetHighscoresFromTheResource()

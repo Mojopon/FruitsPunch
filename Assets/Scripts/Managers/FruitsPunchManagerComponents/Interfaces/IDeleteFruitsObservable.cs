@@ -6,5 +6,5 @@ using FruitsPunchInGameScripts;
 public interface IDeleteFruitsObservable
 {
     IObservable<Fruits> DeleteFruitsObservable { get; }
-    ReadOnlyReactiveProperty<int> ComboObservable { get; }
+    ReadOnlyReactiveProperty<int> ComboReactiveProperty { get; }
 }

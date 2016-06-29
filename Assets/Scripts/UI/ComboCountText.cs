@@ -18,7 +18,7 @@ public class ComboCountText : MonoBehaviour
     {
         var observable = instance as IDeleteFruitsObservable;
 
-        observable.ComboObservable
+        observable.ComboReactiveProperty
                   .Subscribe(x => OnComboChange(x))
                   .AddTo(instance);
     }

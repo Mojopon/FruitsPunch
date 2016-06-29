@@ -67,7 +67,7 @@ namespace FruitsPunchInGameScripts
         public IObservable<Fruits> DeleteFruitsObservable { get { return _deleteFruitsStream.AsObservable(); } }
         private Subject<Fruits> _deleteFruitsStream = new Subject<Fruits>();
 
-        public ReadOnlyReactiveProperty<int> ComboObservable { get { return _comboReactiveProperty.ToReadOnlyReactiveProperty(); } }
+        public ReadOnlyReactiveProperty<int> ComboReactiveProperty { get { return _comboReactiveProperty.ToReadOnlyReactiveProperty(); } }
         private ReactiveProperty<int> _comboReactiveProperty = new ReactiveProperty<int>(0);
 
         // FeverPoint Relative Group
