@@ -6,6 +6,9 @@ using System;
 
 public class DisplayCurrentScore : MonoBehaviour
 {
+    [SerializeField]
+    private Text displayCurrentScoreText;
+
     void Start()
     {
         ScoreManager.ObservableInstance
@@ -15,16 +18,15 @@ public class DisplayCurrentScore : MonoBehaviour
 
     }
 
-    private IDisposable subscription;
     void SubscribeOnScoreManager(ScoreManager instance)
     {
-        subscription = instance.ScoreReactiveProperty
-                               .Subscribe(x => OnScoreChange(x))
-                               .AddTo(gameObject);
+        instance.ScoreReactiveProperty
+                .Subscribe(x => OnScoreChange(x))
+                .AddTo(instance);
     }
 
     void OnScoreChange(int score)
     {
-        GetComponent<Text>().text = score.ToString();
+        displayCurrentScoreText.text = score.ToString();
     }
 }

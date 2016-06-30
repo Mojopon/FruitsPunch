@@ -6,6 +6,9 @@ using UniRx;
 
 public class ComboCountText : MonoBehaviour
 {
+    [SerializeField]
+    private Text comboCountText;
+
     void Start()
     {
         FruitsPunchManager.ObservableInstance
@@ -25,6 +28,6 @@ public class ComboCountText : MonoBehaviour
 	
     void OnComboChange(int combo)
     {
-        GetComponent<Text>().text = combo.ToString();
+        comboCountText.text = combo.ToString();
     }
 }

@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class TimeLeftText : MonoBehaviour
 {
+    [SerializeField]
+    private Text timeleftText;
+
     void Start()
     {
         GameTimerManager.ObservableInstance
@@ -13,10 +16,10 @@ public class TimeLeftText : MonoBehaviour
                         .AddTo(gameObject);
     }
 
-    void SubscribeOnTimerManager(GameTimerManager gameTimerManager)
+    void SubscribeOnTimerManager(GameTimerManager instance)
     {
-        gameTimerManager.GameTime
-                        .Subscribe(x => GetComponent<Text>().text = x.ToString())
-                        .AddTo(gameTimerManager.gameObject);
+        instance.GameTime
+                .Subscribe(x => timeleftText.text = x.ToString())
+                .AddTo(instance);
     }
 }
