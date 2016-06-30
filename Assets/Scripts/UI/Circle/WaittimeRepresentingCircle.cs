@@ -6,8 +6,18 @@ using FruitsPunchInGameScripts;
 
 public class WaittimeRepresentingCircle : MonoBehaviour
 {
+    [SerializeField]
+    private Image circle;
+
     void Start()
     {
+        if (!circle)
+        {
+            Debug.LogError("Cant find Circle Image(WaittimeRepresentingCircle Script)");
+            Destroy(this);
+            return;
+        }
+
         FruitsPunchManager.ObservableInstance
                           .Where(x => x != null)
                           .Subscribe(x => SubscribeOnFruitsManager(x))
@@ -16,13 +26,11 @@ public class WaittimeRepresentingCircle : MonoBehaviour
 
     void SubscribeOnFruitsManager(FruitsPunchManager instance)
     {
-        var circleImage = GetComponent<Image>();
-
         instance.WaitTimeProgressObservable
                 .Select(x => Mathf.Clamp(x, 0, 1))
                 .Subscribe(x => 
                 {
-                    circleImage.fillAmount = 1f - x;
+                    circle.fillAmount = 1f - x;
                 })
                 .AddTo(gameObject);
     }
