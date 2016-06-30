@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class CountdownText : MonoBehaviour
 {
+    [SerializeField]
     private Text countdownText;
     void Start()
     {
-        countdownText = GetComponent<Text>();
         countdownText.gameObject.SetActive(false);
 
         CountdownManager.ObservableInstance
@@ -22,7 +22,7 @@ public class CountdownText : MonoBehaviour
         countdownText.gameObject.SetActive(true);
 
         countdownManager.CountdownObservable
-                        .Subscribe(x => GetComponent<Text>().text = x.ToString(), () => countdownText.gameObject.SetActive(false))
+                        .Subscribe(x => countdownText.text = x.ToString(), () => countdownText.gameObject.SetActive(false))
                         .AddTo(countdownManager.gameObject);
     }
 }
