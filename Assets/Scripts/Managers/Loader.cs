@@ -10,12 +10,14 @@ public class Loader : MonoBehaviour
 
     // in game manager prefabs(these will going to be instantiated when the game started) 
     public FruitsPunchManager fruitsManagerPrefab;
-    public DeletedFruitsParticle fruitsPunchParticleManagerPrefab;
     public GameTimerManager gameTimerManagerPrefab;
     public CountdownManager countdownManagerPrefab;
 
+    public GameObject[] effectManagersPrefab;
+
     private Transform managers;
     private Transform inGameManagers;
+    private Transform effectManagers;
     void Start()
     {
         managers = new GameObject("Managers").transform;
@@ -25,7 +27,10 @@ public class Loader : MonoBehaviour
 
         GameState.Instance.GameStateReactiveProperty
                           .Where(x => x == GameStateEnum.BeforeGameStart)
-                          .Subscribe(x => InstantiateInGameManagers())
+                          .Subscribe(x => 
+                          {
+                              InstantiateInGameManagers();
+                          })
                           .AddTo(gameObject);
 
         GameState.Instance.GameStateReactiveProperty
@@ -40,9 +45,22 @@ public class Loader : MonoBehaviour
             inGameManagers = new GameObject("InGameManagers").transform;
 
         Instantiate(fruitsManagerPrefab).transform.SetParent(inGameManagers);
-        Instantiate(fruitsPunchParticleManagerPrefab).transform.SetParent(inGameManagers);
         Instantiate(gameTimerManagerPrefab).transform.SetParent(inGameManagers);
         Instantiate(countdownManagerPrefab).transform.SetParent(inGameManagers);
+
+        InsitantiateEffectManagers();
+    }
+
+    void InsitantiateEffectManagers()
+    {
+        if (effectManagers == null)
+            effectManagers = new GameObject("EffectManagers").transform;
+
+        effectManagers.SetParent(inGameManagers);
+
+        foreach (var obj in effectManagersPrefab)
+            Instantiate(obj).transform.SetParent(effectManagers);
+        
     }
 
     void DestroyManagers()

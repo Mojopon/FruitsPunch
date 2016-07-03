@@ -5,6 +5,7 @@ using FruitsPunchInGameScripts;
 public class HighlightEffect : MonoBehaviour
 {
     public float timeToFadeOut = 1f;
+    public float startAlpha = 0.75f;
 
     private SpriteRenderer sprite;
 
@@ -37,7 +38,7 @@ public class HighlightEffect : MonoBehaviour
             progress += Time.deltaTime / timeToFadeOut;
 
             var color = sprite.color;
-            color.a = 1 - progress;
+            color.a = startAlpha * (1 - progress);
 
             sprite.color = color;
 

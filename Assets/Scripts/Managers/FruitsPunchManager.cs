@@ -11,6 +11,11 @@ namespace FruitsPunchInGameScripts
     {
         private List<GameObject> fruits = new List<GameObject>();
 
+        public GameObject this[int index]
+        {
+            get { return fruits[index]; }
+        }
+
         public Fruits(params GameObject[] fruitsObjects)
         {
             fruits = fruitsObjects.ToList();
@@ -58,7 +63,7 @@ namespace FruitsPunchInGameScripts
         private int _RemainComboCount = 3;
 
         // FruitsPunchIngameProperties Group
-        public float   FruitsDeleteRadius     { get { return _FruitDeleteRadius; } }
+        public float   FruitsDeleteRadius     { get { return CalculateRadius(_FruitDeleteRadius); } }
         public Vector3 FruitsSpawnPoint       { get { return _FruitsSpawnPoint; } }
         public float   GapTimeBetweenDelete   { get { return _NextDeleteAvailableDuration;  } }
         public float   TimeToFinishFever      { get { return _TimeToFinishFever; } }
@@ -235,7 +240,10 @@ namespace FruitsPunchInGameScripts
                            .ToArray();
             }
 
-            return hits.Select(x => x.gameObject).ToArray();
+            // sort by closest fruits to the mouse point position
+            return hits.Select(x => x.gameObject)
+                       .OrderBy(x => Vector3.Distance(targetFruit.transform.position, x.gameObject.transform.position))
+                       .ToArray();
         }
 
 
